@@ -12,13 +12,12 @@ datasource db {
 
 model User {
   id         Int          @id @default(autoincrement())
-  email      String       @unique
+  username   String       @unique
+  password   String
   name       String?
-  role       Role         @default(USER)
   groups     Group[]
-  SubGroup   SubGroup?    @relation(fields: [subGroupId], references: [id])
-  subGroupId Int?
-  Permission Permission[]
+  subGroups  SubGroup[]
+  permission Permission[]
 }
 
 model Task {
@@ -28,7 +27,7 @@ model Task {
 
 model Permission {
   id      Int    @id @default(autoincrement())
-  Group   Group? @relation(fields: [groupId], references: [id])
+  group   Group? @relation(fields: [groupId], references: [id])
   groupId Int?
   user    User   @relation(fields: [userId], references: [id])
   userId  Int
@@ -38,7 +37,7 @@ model Permission {
 model Group {
   id         Int          @id @default(autoincrement())
   users      User[]
-  SubGroup   SubGroup[]
+  subGroup   SubGroup[]
   permission Permission[]
 }
 

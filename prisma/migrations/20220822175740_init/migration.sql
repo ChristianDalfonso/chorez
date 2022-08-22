@@ -4,10 +4,9 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "name" TEXT,
-    "role" "Role" NOT NULL DEFAULT 'USER',
-    "subGroupId" INTEGER,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -51,8 +50,14 @@ CREATE TABLE "_GroupToUser" (
     "B" INTEGER NOT NULL
 );
 
+-- CreateTable
+CREATE TABLE "_SubGroupToUser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SubGroup_taskId_key" ON "SubGroup"("taskId");
@@ -63,8 +68,11 @@ CREATE UNIQUE INDEX "_GroupToUser_AB_unique" ON "_GroupToUser"("A", "B");
 -- CreateIndex
 CREATE INDEX "_GroupToUser_B_index" ON "_GroupToUser"("B");
 
--- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_subGroupId_fkey" FOREIGN KEY ("subGroupId") REFERENCES "SubGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "_SubGroupToUser_AB_unique" ON "_SubGroupToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_SubGroupToUser_B_index" ON "_SubGroupToUser"("B");
 
 -- AddForeignKey
 ALTER TABLE "Permission" ADD CONSTRAINT "Permission_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -83,3 +91,9 @@ ALTER TABLE "_GroupToUser" ADD CONSTRAINT "_GroupToUser_A_fkey" FOREIGN KEY ("A"
 
 -- AddForeignKey
 ALTER TABLE "_GroupToUser" ADD CONSTRAINT "_GroupToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_SubGroupToUser" ADD CONSTRAINT "_SubGroupToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "SubGroup"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_SubGroupToUser" ADD CONSTRAINT "_SubGroupToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
