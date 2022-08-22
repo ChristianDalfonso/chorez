@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  name       String?
+  role       Role         @default(USER)
+  groups     Group[]
+  SubGroup   SubGroup?    @relation(fields: [subGroupId], references: [id])
+  subGroupId Int?
+  Permission Permission[]
+}
+
+model Task {
+  id       Int       @id @default(autoincrement())
+  SubGroup SubGroup?
+}
+
+model Permission {
+  id      Int    @id @default(autoincrement())
+  Group   Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+  role    Role
+}
+
+model Group {
+  id         Int          @id @default(autoincrement())
+  users      User[]
+  SubGroup   SubGroup[]
+  permission Permission[]
+}
+
+model SubGroup {
+  id      Int    @id @default(autoincrement())
+  task    Task   @relation(fields: [taskId], references: [id])
+  users   User[]
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId Int
+  taskId  Int    @unique
+}
+
+enum Role {
+  USER
+  ADMIN
+}
