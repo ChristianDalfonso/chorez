@@ -1,15 +1,8 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { use } from 'passport';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -40,40 +33,25 @@ export class UserService {
 
   async createUser(data: CreateUserDto): Promise<User | null> {
     data.password = await bcrypt.hash(data.password, 10);
-
-    try {
-      return this.prisma.user.create({
-        data,
-      });
-    } catch (error) {
-      throw new HttpException('Failed to Create User', HttpStatus.CONFLICT);
-    }
-
-    return;
+    return this.prisma.user.create({
+      data,
+    });
   }
 
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    try {
-      const { where, data } = params;
-      return await this.prisma.user.update({
-        data,
-        where,
-      });
-    } catch (error) {
-      throw new HttpException('Failed to Update User', HttpStatus.CONFLICT);
-    }
+    const { where, data } = params;
+    return this.prisma.user.update({
+      data,
+      where,
+    });
   }
 
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    try {
-      return this.prisma.user.delete({
-        where,
-      });
-    } catch (error) {
-      throw new HttpException('Failed to Delete User', HttpStatus.CONFLICT);
-    }
+    return this.prisma.user.delete({
+      where,
+    });
   }
 }

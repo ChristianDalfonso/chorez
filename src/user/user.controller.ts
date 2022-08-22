@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
   UseGuards,
   Request,
@@ -21,7 +20,7 @@ import { AuthenticatedGuard } from 'src/auth/authenticated.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Put()
+  @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       await this.userService.createUser(createUserDto);
