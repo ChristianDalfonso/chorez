@@ -42,10 +42,9 @@ export class UserService {
     data.password = await bcrypt.hash(data.password, 10);
 
     try {
-      let user = await this.prisma.user.create({
+      return this.prisma.user.create({
         data,
       });
-      return user;
     } catch (error) {
       throw new HttpException('Failed to Create User', HttpStatus.CONFLICT);
     }
@@ -57,16 +56,24 @@ export class UserService {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    const { where, data } = params;
-    return this.prisma.user.update({
-      data,
-      where,
-    });
+    try {
+      const { where, data } = params;
+      return await this.prisma.user.update({
+        data,
+        where,
+      });
+    } catch (error) {
+      throw new HttpException('Failed to Update User', HttpStatus.CONFLICT);
+    }
   }
 
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({
-      where,
-    });
+    try {
+      return this.prisma.user.delete({
+        where,
+      });
+    } catch (error) {
+      throw new HttpException('Failed to Delete User', HttpStatus.CONFLICT);
+    }
   }
 }
