@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'OWNER');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -31,6 +31,7 @@ CREATE TABLE "Permission" (
 -- CreateTable
 CREATE TABLE "Group" (
     "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
 
     CONSTRAINT "Group_pkey" PRIMARY KEY ("id")
 );

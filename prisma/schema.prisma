@@ -20,37 +20,35 @@ model User {
   permission Permission[]
 }
 
-model Task {
-  id       Int       @id @default(autoincrement())
-  SubGroup SubGroup?
-}
-
 model Permission {
-  id      Int    @id @default(autoincrement())
-  group   Group? @relation(fields: [groupId], references: [id])
-  groupId Int?
-  user    User   @relation(fields: [userId], references: [id])
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId Int
+  user    User  @relation(fields: [userId], references: [id])
   userId  Int
   role    Role
+
+  @@id([userId, groupId])
 }
 
 model Group {
-  id         Int          @id @default(autoincrement())
-  users      User[]
-  subGroup   SubGroup[]
-  permission Permission[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  users       User[]
+  subGroup    SubGroup[]
+  permissions Permission[]
 }
 
 model SubGroup {
-  id      Int    @id @default(autoincrement())
-  task    Task   @relation(fields: [taskId], references: [id])
+  id      Int      @id @default(autoincrement())
+  task    String
+  due     DateTime
   users   User[]
-  group   Group  @relation(fields: [groupId], references: [id])
+  group   Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId Int
-  taskId  Int    @unique
 }
 
 enum Role {
   USER
   ADMIN
+  OWNER
 }
